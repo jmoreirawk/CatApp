@@ -46,13 +46,18 @@ dependencies {
 
     api(libs.androidx.paging.common)
     api(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.paging.runtime)
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization)
+    implementation(libs.room.ktx)
+    implementation(libs.room.paging)
+    implementation(libs.room.runtime)
     ksp(libs.hilt.compiler)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
