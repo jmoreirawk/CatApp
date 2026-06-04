@@ -28,8 +28,34 @@ internal constructor(
     private val breedDao: BreedDao,
     private val timeProvider: TimeProvider,
 ) {
+    fun getBreeds(query: String): Flow<PagingData<Breed>> {
+        val trimmedQuery = query.trim()
+        return if (trimmedQuery.isEmpty()) {
+            defaultBreedPager()
+        } else {
+            searchBreedPager(trimmedQuery)
+        }.flow.map { pagingData -> pagingData.map { it.toDomain() } }
+    }
+
     @OptIn(ExperimentalPagingApi::class)
-    fun getBreeds(): Flow<PagingData<Breed>> =
+    private fun defaultBreedPager() = Pager(
+        config =
+            PagingConfig(
+                pageSize = PAGE_SIZE,
+                initialLoadSize = PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+        remoteMediator =
+            BreedRemoteMediator(
+                query = BreedRemoteMediator.DEFAULT_QUERY,
+                api = api,
+                database = database,
+                timeProvider = timeProvider,
+            ),
+        pagingSourceFactory = { breedDao.pagingSource(BreedRemoteMediator.DEFAULT_QUERY) },
+    )
+
+    private fun searchBreedPager(query: String) =
         Pager(
             config =
                 PagingConfig(
@@ -37,17 +63,8 @@ internal constructor(
                     initialLoadSize = PAGE_SIZE,
                     enablePlaceholders = false,
                 ),
-            remoteMediator =
-                BreedRemoteMediator(
-                    query = BreedRemoteMediator.DEFAULT_QUERY,
-                    api = api,
-                    database = database,
-                    timeProvider = timeProvider,
-                ),
-            pagingSourceFactory = {
-                breedDao.pagingSource(BreedRemoteMediator.DEFAULT_QUERY)
-            },
-        ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
+            pagingSourceFactory = { breedDao.searchPagingSource(query) },
+        )
 
     suspend fun getBreed(id: String): Breed {
         val cachedBreed = breedDao.getBreed(id)

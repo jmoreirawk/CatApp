@@ -1,17 +1,24 @@
 package pro.moreira.catapp.feature.breeds
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -36,8 +43,11 @@ fun BreedsScreen(
     viewModel: BreedsViewModel = hiltViewModel(),
 ) {
     val breeds = viewModel.breeds.collectAsLazyPagingItems()
+    val query by viewModel.query.collectAsState()
     BreedsScreenContent(
         breeds = breeds,
+        query = query,
+        onQueryChange = viewModel::onQueryChange,
         onBreedClick = onBreedClick,
     )
 }
@@ -46,41 +56,87 @@ fun BreedsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun BreedsScreenContent(
     breeds: LazyPagingItems<Breed>,
+    query: String,
+    onQueryChange: (String) -> Unit,
     onBreedClick: (String) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        focusManager.clearFocus(force = true)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.breeds_title)) })
         },
     ) { innerPadding ->
-        PagingContent(
-            items = breeds,
-            modifier = Modifier.padding(innerPadding),
-            empty = { modifier ->
-                EmptyState(
-                    message = stringResource(R.string.breeds_empty),
-                    modifier = modifier,
-                )
-            },
-            error = { throwable, retry, modifier ->
-                MessageWithRetry(
-                    title = stringResource(R.string.breeds_error_title),
-                    message = throwable.userMessage(
-                        fallback = stringResource(R.string.breeds_error_message),
-                    ),
-                    retryText = stringResource(R.string.retry),
-                    onRetry = retry,
-                    modifier = modifier,
-                )
-            },
-        ) { items, modifier ->
-            BreedList(
-                breeds = items,
-                onBreedClick = onBreedClick,
-                modifier = modifier,
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+        ) {
+            SearchField(
+                query = query,
+                onQueryChange = onQueryChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.spacingLarge, vertical = Dimens.spacingMedium),
             )
+            PagingContent(
+                items = breeds,
+                modifier = Modifier.fillMaxSize(),
+                empty = { modifier ->
+                    val message = if (query.isNotBlank()) {
+                        stringResource(R.string.breeds_search_empty, query)
+                    } else {
+                        stringResource(R.string.breeds_empty)
+                    }
+                    EmptyState(message = message, modifier = modifier)
+                },
+                error = { throwable, retry, modifier ->
+                    MessageWithRetry(
+                        title = stringResource(R.string.breeds_error_title),
+                        message = throwable.userMessage(
+                            fallback = stringResource(R.string.breeds_error_message),
+                        ),
+                        retryText = stringResource(R.string.retry),
+                        onRetry = retry,
+                        modifier = modifier,
+                    )
+                },
+            ) { items, modifier ->
+                BreedList(
+                    breeds = items,
+                    onBreedClick = onBreedClick,
+                    modifier = modifier,
+                )
+            }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier = modifier,
+        placeholder = { Text(stringResource(R.string.breeds_search_hint)) },
+        singleLine = true,
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                TextButton(onClick = { onQueryChange("") }) {
+                    Text(stringResource(R.string.breeds_search_clear))
+                }
+            }
+        },
+    )
 }
 
 @Composable
@@ -155,6 +211,8 @@ private fun BreedsScreenPreview() {
     CatAppTheme {
         BreedsScreenContent(
             breeds = previewBreeds,
+            query = "",
+            onQueryChange = {},
             onBreedClick = {},
         )
     }

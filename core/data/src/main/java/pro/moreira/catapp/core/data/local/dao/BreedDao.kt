@@ -18,6 +18,16 @@ internal interface BreedDao {
     )
     fun pagingSource(query: String): PagingSource<Int, BreedEntity>
 
+    @Query(
+        """
+        SELECT *
+        FROM breeds
+        WHERE name LIKE '%' || :name || '%'
+        ORDER BY name ASC
+        """,
+    )
+    fun searchPagingSource(name: String): PagingSource<Int, BreedEntity>
+
     @Query("SELECT * FROM breeds WHERE id = :id")
     suspend fun getBreed(id: String): BreedEntity?
 
