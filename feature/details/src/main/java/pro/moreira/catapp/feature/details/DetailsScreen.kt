@@ -4,6 +4,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun DetailsScreen() {
-    Text(text = "Details")
+fun DetailsScreen(breedId: String) {
+    Text(text = "Details: $breedId")
 }

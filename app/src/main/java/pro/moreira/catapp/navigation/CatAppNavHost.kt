@@ -1,33 +1,53 @@
 package pro.moreira.catapp.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import kotlinx.serialization.Serializable
 import pro.moreira.catapp.feature.breeds.BreedsScreen
 import pro.moreira.catapp.feature.details.DetailsScreen
 import pro.moreira.catapp.feature.favorites.FavoritesScreen
 
-private const val BREEDS_ROUTE = "breeds"
-private const val DETAILS_ROUTE = "details"
-private const val FAVORITES_ROUTE = "favorites"
+@Serializable
+private data object Breeds : NavKey
+
+@Serializable
+private data class Details(val breedId: String) : NavKey
+
+@Serializable
+private data object Favorites : NavKey
 
 @Composable
 fun CatAppNavHost() {
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack(Breeds)
 
-    NavHost(
-        navController = navController,
-        startDestination = BREEDS_ROUTE,
-    ) {
-        composable(BREEDS_ROUTE) {
-            BreedsScreen()
-        }
-        composable(DETAILS_ROUTE) {
-            DetailsScreen()
-        }
-        composable(FAVORITES_ROUTE) {
-            FavoritesScreen()
-        }
-    }
+    NavDisplay(
+        backStack = backStack,
+        onBack = {
+            if (backStack.size > 1) {
+                backStack.removeLastOrNull()
+            }
+        },
+        entryProvider = entryProvider {
+            entry<Breeds> {
+                BreedsScreen(
+                    onBreedClick = { breedId ->
+                        // Logic to prevent double clicks
+                        val destination = Details(breedId)
+                        if (backStack.lastOrNull() != destination) {
+                            backStack.add(destination)
+                        }
+                    },
+                )
+            }
+            entry<Details> { destination ->
+                DetailsScreen(breedId = destination.breedId)
+            }
+            entry<Favorites> {
+                FavoritesScreen()
+            }
+        },
+    )
 }
