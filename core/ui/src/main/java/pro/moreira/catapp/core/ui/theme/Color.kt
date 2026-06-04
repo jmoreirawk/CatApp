@@ -1,4 +1,4 @@
-package pro.moreira.catapp.ui.theme
+package pro.moreira.catapp.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
