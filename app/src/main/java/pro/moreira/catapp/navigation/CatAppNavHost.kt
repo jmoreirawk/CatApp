@@ -35,11 +35,10 @@ fun CatAppNavHost() {
                 BreedsScreen(
                     onBreedClick = { breedId ->
                         // Logic to prevent double clicks
-                        val destination = Details(breedId)
-                        if (backStack.lastOrNull() != destination) {
-                            backStack.add(destination)
+                        if (backStack.lastOrNull() is Breeds) {
+                            backStack.add(Details(breedId))
                         }
-                    },
+                    }
                 )
             }
             entry<Details> { destination ->
