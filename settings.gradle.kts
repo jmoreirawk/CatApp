@@ -24,3 +24,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "CatApp"
 include(":app")
+include(":core:data")
+include(":core:domain")
+include(":core:ui")
+include(":feature:breeds")
+include(":feature:details")
+include(":feature:favorites")
