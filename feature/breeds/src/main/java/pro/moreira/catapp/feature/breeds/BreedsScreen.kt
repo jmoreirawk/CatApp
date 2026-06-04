@@ -56,10 +56,13 @@ private fun BreedsScreenContent(
         PagingContent(
             items = breeds,
             modifier = Modifier.padding(innerPadding),
-            empty = {
-                EmptyState(message = stringResource(R.string.breeds_empty))
+            empty = { modifier ->
+                EmptyState(
+                    message = stringResource(R.string.breeds_empty),
+                    modifier = modifier,
+                )
             },
-            error = { throwable, retry ->
+            error = { throwable, retry, modifier ->
                 MessageWithRetry(
                     title = stringResource(R.string.breeds_error_title),
                     message = throwable.userMessage(
@@ -67,12 +70,14 @@ private fun BreedsScreenContent(
                     ),
                     retryText = stringResource(R.string.retry),
                     onRetry = retry,
+                    modifier = modifier,
                 )
             },
-        ) { items ->
+        ) { items, modifier ->
             BreedList(
                 breeds = items,
                 onBreedClick = onBreedClick,
+                modifier = modifier,
             )
         }
     }

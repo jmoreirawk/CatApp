@@ -10,9 +10,9 @@ import androidx.paging.compose.LazyPagingItems
 fun <T : Any> PagingContent(
     items: LazyPagingItems<T>,
     modifier: Modifier = Modifier,
-    empty: @Composable () -> Unit = {},
-    error: @Composable (Throwable, () -> Unit) -> Unit = { _, _ -> },
-    content: @Composable (LazyPagingItems<T>) -> Unit,
+    empty: @Composable (Modifier) -> Unit = {},
+    error: @Composable (Throwable, () -> Unit, Modifier) -> Unit = { _, _, _ -> },
+    content: @Composable (LazyPagingItems<T>, Modifier) -> Unit,
 ) {
     when {
         items.loadState.refresh is LoadState.Loading -> {
@@ -21,15 +21,15 @@ fun <T : Any> PagingContent(
 
         items.loadState.refresh is LoadState.Error && items.itemCount == 0 -> {
             val throwable = (items.loadState.refresh as LoadState.Error).error
-            error(throwable, items::retry)
+            error(throwable, items::retry, modifier)
         }
 
         items.itemCount == 0 -> {
-            empty()
+            empty(modifier)
         }
 
         else -> {
-            content(items)
+            content(items, modifier)
         }
     }
 }
