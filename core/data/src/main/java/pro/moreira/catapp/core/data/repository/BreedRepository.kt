@@ -86,6 +86,10 @@ internal constructor(
         return remoteBreed.toDomain()
     }
 
+    suspend fun toggleFavorite(breedId: String) {
+        check(breedDao.toggleFavorite(breedId) > 0)
+    }
+
     private companion object {
         const val PAGE_SIZE = 20
     }

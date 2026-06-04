@@ -11,4 +11,5 @@ internal fun BreedEntity.toDomain() = Breed(
     temperament = temperament,
     description = description,
     lifespan = lifespan,
+    isFavorite = isFavorite,
 )

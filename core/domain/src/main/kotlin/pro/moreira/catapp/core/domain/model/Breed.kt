@@ -8,4 +8,5 @@ data class Breed(
     val temperament: String,
     val description: String,
     val lifespan: String,
+    val isFavorite: Boolean = false,
 )

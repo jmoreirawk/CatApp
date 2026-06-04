@@ -6,8 +6,11 @@
     <string name="breeds_search_hint">Search breeds</string>
     <string name="breeds_search_empty">No breeds match \"%1$s\".</string>
     <string name="breeds_search_clear">Clear search</string>
-    <string name="breeds_error_title">Couldn’t load breeds</string>
-    <string name="breeds_append_error_title">Couldn’t load more breeds</string>
+    <string name="breeds_error_title">Couldn\'t load breeds</string>
+    <string name="breeds_append_error_title">Couldn\'t load more breeds</string>
     <string name="breeds_error_message">Unable to load breeds.</string>
     <string name="retry">Retry</string>
+    <string name="add_to_favourites">Add to favourites</string>
+    <string name="remove_from_favourites">Remove from favourites</string>
+    <string name="favorite_error_message">Failed to update favourite. Please try again.</string>
 </resources>

@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -44,11 +47,22 @@ fun BreedsScreen(
 ) {
     val breeds = viewModel.breeds.collectAsLazyPagingItems()
     val query by viewModel.query.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val errorMessage = stringResource(R.string.favorite_error_message)
+
+    LaunchedEffect(Unit) {
+        viewModel.favoriteError.collect {
+            snackbarHostState.showSnackbar(message = errorMessage)
+        }
+    }
+
     BreedsScreenContent(
         breeds = breeds,
         query = query,
         onQueryChange = viewModel::onQueryChange,
         onBreedClick = onBreedClick,
+        onFavoriteToggle = viewModel::onFavoriteToggle,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -59,6 +73,8 @@ private fun BreedsScreenContent(
     query: String,
     onQueryChange: (String) -> Unit,
     onBreedClick: (String) -> Unit,
+    onFavoriteToggle: (String) -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -70,6 +86,7 @@ private fun BreedsScreenContent(
         topBar = {
             TopAppBar(title = { Text(stringResource(R.string.breeds_title)) })
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -109,6 +126,7 @@ private fun BreedsScreenContent(
                 BreedList(
                     breeds = items,
                     onBreedClick = onBreedClick,
+                    onFavoriteToggle = onFavoriteToggle,
                     modifier = modifier,
                 )
             }
@@ -143,6 +161,7 @@ private fun SearchField(
 private fun BreedList(
     breeds: LazyPagingItems<Breed>,
     onBreedClick: (String) -> Unit,
+    onFavoriteToggle: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -158,6 +177,7 @@ private fun BreedList(
                 BreedCard(
                     breed = breed,
                     onClick = { onBreedClick(breed.id) },
+                    onFavoriteToggle = { onFavoriteToggle(breed.id) },
                 )
             }
         }
@@ -214,6 +234,8 @@ private fun BreedsScreenPreview() {
             query = "",
             onQueryChange = {},
             onBreedClick = {},
+            onFavoriteToggle = {},
+            snackbarHostState = SnackbarHostState(),
         )
     }
 }

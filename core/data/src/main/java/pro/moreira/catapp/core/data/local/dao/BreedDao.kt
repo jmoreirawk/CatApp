@@ -31,6 +31,9 @@ internal interface BreedDao {
     @Query("SELECT * FROM breeds WHERE id = :id")
     suspend fun getBreed(id: String): BreedEntity?
 
+    @Query("UPDATE breeds SET isFavorite = NOT isFavorite WHERE id = :id")
+    suspend fun toggleFavorite(id: String): Int
+
     @Query(
         """
         INSERT INTO breeds (
