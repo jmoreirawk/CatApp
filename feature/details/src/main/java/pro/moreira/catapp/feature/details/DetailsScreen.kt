@@ -31,12 +31,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pro.moreira.catapp.core.domain.model.Breed
+import pro.moreira.catapp.core.ui.component.CatImage
 import pro.moreira.catapp.core.ui.component.FullScreenLoading
 import pro.moreira.catapp.core.ui.component.MessageWithRetry
+import pro.moreira.catapp.core.ui.component.userMessage
 import pro.moreira.catapp.core.ui.theme.CatAppTheme
 import pro.moreira.catapp.core.ui.theme.Dimens
 import pro.moreira.catapp.feature.details.component.BreedDetailHeader
-import pro.moreira.catapp.core.ui.component.CatImage
 import pro.moreira.catapp.feature.details.component.DetailSection
 import pro.moreira.catapp.feature.details.component.SectionDivider
 
@@ -110,7 +111,9 @@ private fun DetailsScaffold(
             is DetailsUiState.Error -> {
                 MessageWithRetry(
                     title = stringResource(R.string.details_error_message),
-                    message = uiState.message,
+                    message = uiState.throwable.userMessage(
+                        fallback = stringResource(R.string.details_error_message),
+                    ),
                     retryText = stringResource(R.string.details_retry),
                     onRetry = onRetry,
                     modifier = Modifier

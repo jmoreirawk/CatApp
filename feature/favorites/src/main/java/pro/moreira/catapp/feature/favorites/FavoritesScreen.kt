@@ -27,6 +27,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pro.moreira.catapp.core.domain.model.Breed
 import pro.moreira.catapp.core.ui.component.EmptyState
+import pro.moreira.catapp.core.ui.component.FullScreenLoading
 import pro.moreira.catapp.core.ui.theme.CatAppTheme
 import pro.moreira.catapp.core.ui.theme.Dimens
 import pro.moreira.catapp.feature.favorites.component.FavoriteBreedCard
@@ -62,7 +63,7 @@ fun FavoritesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FavoritesScreenContent(
-    breeds: List<Breed>,
+    breeds: List<Breed>?,
     averageLifespan: Double?,
     onBreedClick: (String) -> Unit,
     onBackClick: () -> Unit,
@@ -85,35 +86,47 @@ private fun FavoritesScreenContent(
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
-        if (breeds.isEmpty()) {
-            EmptyState(
-                message = stringResource(R.string.favorites_empty),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(Dimens.spacingLarge),
-                verticalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
-            ) {
-                item(key = "lifespan_summary") {
-                    LifespanSummaryCard(
-                        averageLifespan = averageLifespan,
-                    )
-                }
-                items(
-                    items = breeds,
-                    key = { it.id },
-                ) { breed ->
-                    FavoriteBreedCard(
-                        breed = breed,
-                        onClick = { onBreedClick(breed.id) },
-                        onFavoriteToggle = { onFavoriteToggle(breed.id) },
-                    )
+        when {
+            breeds == null -> {
+                FullScreenLoading(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                )
+            }
+
+            breeds.isEmpty() -> {
+                EmptyState(
+                    message = stringResource(R.string.favorites_empty),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                )
+            }
+
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(Dimens.spacingLarge),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
+                ) {
+                    item(key = "lifespan_summary") {
+                        LifespanSummaryCard(
+                            averageLifespan = averageLifespan,
+                        )
+                    }
+                    items(
+                        items = breeds,
+                        key = { it.id },
+                    ) { breed ->
+                        FavoriteBreedCard(
+                            breed = breed,
+                            onClick = { onBreedClick(breed.id) },
+                            onFavoriteToggle = { onFavoriteToggle(breed.id) },
+                        )
+                    }
                 }
             }
         }

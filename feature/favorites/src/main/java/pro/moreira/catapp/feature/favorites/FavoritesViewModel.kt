@@ -21,12 +21,14 @@ import javax.inject.Inject
 class FavoritesViewModel @Inject constructor(
     private val repository: BreedRepository,
 ) : ViewModel() {
-    val favoriteBreeds: StateFlow<List<Breed>> = repository.observeFavoriteBreeds()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val favoriteBreeds: StateFlow<List<Breed>?> = repository.observeFavoriteBreeds()
+        .map<List<Breed>, List<Breed>?> { it }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val averageLifespan: StateFlow<Double?> = favoriteBreeds
         .map { breeds ->
-            breeds.mapNotNull { Lifespan.parse(it.lifespan) }
+            breeds.orEmpty()
+                .mapNotNull { Lifespan.parse(it.lifespan) }
                 .averageSelectedValue()
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)

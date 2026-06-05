@@ -12,13 +12,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import pro.moreira.catapp.core.data.repository.BreedRepository
 import pro.moreira.catapp.core.domain.model.Breed
-import pro.moreira.catapp.core.ui.component.userMessage
 import javax.inject.Inject
 
 sealed interface DetailsUiState {
     data object Loading : DetailsUiState
     data class Content(val breed: Breed) : DetailsUiState
-    data class Error(val message: String) : DetailsUiState
+    data class Error(val throwable: Throwable) : DetailsUiState
 }
 
 @HiltViewModel
@@ -69,7 +68,7 @@ class DetailsViewModel @Inject constructor(
                 val breed = repository.getBreed(breedId)
                 _uiState.value = DetailsUiState.Content(breed)
             } catch (e: Exception) {
-                _uiState.value = DetailsUiState.Error(e.userMessage("Failed to load breed details"))
+                _uiState.value = DetailsUiState.Error(e)
             }
         }
     }

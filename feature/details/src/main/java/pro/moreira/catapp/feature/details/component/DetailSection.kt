@@ -10,7 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import pro.moreira.catapp.core.ui.theme.Dimens
+import pro.moreira.catapp.feature.details.R
 
 @Composable
 fun DetailSection(
@@ -26,7 +28,7 @@ fun DetailSection(
         )
         Spacer(modifier = Modifier.height(Dimens.spacingExtraSmall))
         Text(
-            text = value,
+            text = value.takeIf(String::isNotBlank) ?: stringResource(R.string.details_unknown),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
