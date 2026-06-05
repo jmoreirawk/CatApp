@@ -1,9 +1,7 @@
-package pro.moreira.catapp.feature.favorites.component
+package pro.moreira.catapp.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,46 +11,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import coil3.compose.AsyncImage
-import pro.moreira.catapp.core.ui.theme.Dimens
-import pro.moreira.catapp.feature.favorites.R
 
 @Composable
-fun FavoriteBreedImage(
+fun CatImage(
     imageUrl: String?,
-    breedName: String,
+    contentDescription: String,
+    fallbackText: String,
     modifier: Modifier = Modifier,
+    fallbackTextStyle: TextStyle = MaterialTheme.typography.headlineMedium,
+    contentScale: ContentScale = ContentScale.Crop,
 ) {
     var failed by remember(imageUrl) { mutableStateOf(imageUrl.isNullOrBlank()) }
-    val imageModifier = modifier
-        .size(Dimens.imageSizeLarge)
-        .clip(RoundedCornerShape(Dimens.cornerRadiusMedium))
-        .background(MaterialTheme.colorScheme.secondaryContainer)
 
     if (failed) {
         Box(
-            modifier = imageModifier,
+            modifier = modifier.background(MaterialTheme.colorScheme.secondaryContainer),
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = breedName.take(1).uppercase(),
-                style = MaterialTheme.typography.headlineMedium,
+                text = fallbackText,
+                style = fallbackTextStyle,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
         }
     } else {
         AsyncImage(
             model = imageUrl,
-            contentDescription = stringResource(
-                R.string.breed_image_content_description,
-                breedName,
-            ),
-            contentScale = ContentScale.Crop,
+            contentDescription = contentDescription,
+            contentScale = contentScale,
             onError = { failed = true },
-            modifier = imageModifier,
+            modifier = modifier,
         )
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -35,7 +36,7 @@ import pro.moreira.catapp.core.ui.component.MessageWithRetry
 import pro.moreira.catapp.core.ui.theme.CatAppTheme
 import pro.moreira.catapp.core.ui.theme.Dimens
 import pro.moreira.catapp.feature.details.component.BreedDetailHeader
-import pro.moreira.catapp.feature.details.component.BreedDetailImage
+import pro.moreira.catapp.core.ui.component.CatImage
 import pro.moreira.catapp.feature.details.component.DetailSection
 import pro.moreira.catapp.feature.details.component.SectionDivider
 
@@ -138,9 +139,11 @@ private fun DetailsContent(
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
     ) {
-        BreedDetailImage(
+        CatImage(
             imageUrl = breed.imageUrl,
-            breedName = breed.name,
+            contentDescription = stringResource(R.string.breed_image_content_description, breed.name),
+            fallbackText = breed.name.take(1).uppercase(),
+            fallbackTextStyle = MaterialTheme.typography.displayLarge,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(4f / 3f),
