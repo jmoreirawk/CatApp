@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.paging.PagingSource
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -72,6 +73,36 @@ class BreedDaoTest {
 
         assertEquals(1, breedDao.toggleFavorite("abys"))
         assertEquals(false, breedDao.getBreed("abys")?.isFavorite)
+    }
+
+    @Test
+    fun `observe favorites returns only favorited breeds`() = runTest {
+        breedDao.upsertBreed(id = "abys", name = "Abyssinian")
+        breedDao.upsertBreed(id = "beng", name = "Bengal")
+        breedDao.upsertBreed(id = "sphy", name = "Sphynx")
+        breedDao.toggleFavorite("abys")
+        breedDao.toggleFavorite("sphy")
+
+        val favorites = breedDao.observeFavorites().first()
+
+        assertEquals(listOf("abys", "sphy"), favorites.map { it.id }.sorted())
+    }
+
+    @Test
+    fun `observe favorites returns breeds ordered by name`() = runTest {
+        breedDao.upsertBreed(id = "sphy", name = "Sphynx")
+        breedDao.upsertBreed(id = "beng", name = "Bengal")
+        breedDao.upsertBreed(id = "abys", name = "Abyssinian")
+        breedDao.toggleFavorite("abys")
+        breedDao.toggleFavorite("beng")
+        breedDao.toggleFavorite("sphy")
+
+        val favorites = breedDao.observeFavorites().first()
+
+        assertEquals(
+            listOf("Abyssinian", "Bengal", "Sphynx"),
+            favorites.map { it.name },
+        )
     }
 
     private suspend fun BreedDao.upsertBreed(

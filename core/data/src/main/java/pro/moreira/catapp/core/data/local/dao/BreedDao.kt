@@ -3,6 +3,7 @@ package pro.moreira.catapp.core.data.local.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import pro.moreira.catapp.core.data.local.entity.BreedEntity
 
 @Dao
@@ -30,6 +31,9 @@ internal interface BreedDao {
 
     @Query("SELECT * FROM breeds WHERE id = :id")
     suspend fun getBreed(id: String): BreedEntity?
+
+    @Query("SELECT * FROM breeds WHERE isFavorite = 1 ORDER BY name ASC")
+    fun observeFavorites(): Flow<List<BreedEntity>>
 
     @Query("UPDATE breeds SET isFavorite = NOT isFavorite WHERE id = :id")
     suspend fun toggleFavorite(id: String): Int

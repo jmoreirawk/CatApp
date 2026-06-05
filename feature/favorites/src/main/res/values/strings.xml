@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_empty">No favorite breeds yet.</string>
+    <string name="favorites_average_lifespan_label">Average Lifespan</string>
+    <string name="favorites_average_lifespan_years">%.1f years</string>
+    <string name="favorites_average_lifespan_unknown">Unknown</string>
+    <string name="breed_image_content_description">%1$s cat</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="favorites_favorite_error">Failed to update favorite. Please try again.</string>
+    <string name="favorites_back">Back</string>
+</resources>

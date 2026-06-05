@@ -10,7 +10,8 @@
     <string name="breeds_append_error_title">Couldn\'t load more breeds</string>
     <string name="breeds_error_message">Unable to load breeds.</string>
     <string name="retry">Retry</string>
-    <string name="add_to_favourites">Add to favourites</string>
-    <string name="remove_from_favourites">Remove from favourites</string>
-    <string name="favorite_error_message">Failed to update favourite. Please try again.</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="favorite_error_message">Failed to update favorite. Please try again.</string>
+    <string name="favorites_navigate">Favorites</string>
 </resources>

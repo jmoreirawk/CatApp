@@ -34,18 +34,32 @@ fun CatAppNavHost() {
             entry<Breeds> {
                 BreedsScreen(
                     onBreedClick = { breedId ->
-                        // Logic to prevent double clicks
                         if (backStack.lastOrNull() is Breeds) {
                             backStack.add(Details(breedId))
                         }
-                    }
+                    },
+                    onNavigateToFavorites = {
+                        if (backStack.lastOrNull() is Breeds) {
+                            backStack.add(Favorites)
+                        }
+                    },
                 )
             }
             entry<Details> { destination ->
-                DetailsScreen(breedId = destination.breedId)
+                DetailsScreen(
+                    breedId = destination.breedId,
+                    onBackClick = { backStack.removeLastOrNull() },
+                )
             }
             entry<Favorites> {
-                FavoritesScreen()
+                FavoritesScreen(
+                    onBreedClick = { breedId ->
+                        if (backStack.lastOrNull() is Favorites) {
+                            backStack.add(Details(breedId))
+                        }
+                    },
+                    onBackClick = { backStack.removeLastOrNull() },
+                )
             }
         },
     )

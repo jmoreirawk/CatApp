@@ -90,6 +90,9 @@ internal constructor(
         check(breedDao.toggleFavorite(breedId) > 0)
     }
 
+    fun observeFavoriteBreeds(): Flow<List<Breed>> =
+        breedDao.observeFavorites().map { entities -> entities.map { it.toDomain() } }
+
     private companion object {
         const val PAGE_SIZE = 20
     }

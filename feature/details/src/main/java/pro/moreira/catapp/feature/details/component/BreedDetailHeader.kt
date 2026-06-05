@@ -36,9 +36,9 @@ fun BreedDetailHeader(
             Icon(
                 imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                 contentDescription = if (isFavorite) {
-                    stringResource(R.string.remove_from_favourites)
+                    stringResource(R.string.remove_from_favorites)
                 } else {
-                    stringResource(R.string.add_to_favourites)
+                    stringResource(R.string.add_to_favorites)
                 },
                 tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
             )

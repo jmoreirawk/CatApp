@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -43,6 +47,7 @@ import pro.moreira.catapp.feature.breeds.component.BreedCard
 @Composable
 fun BreedsScreen(
     onBreedClick: (String) -> Unit,
+    onNavigateToFavorites: () -> Unit,
     viewModel: BreedsViewModel = hiltViewModel(),
 ) {
     val breeds = viewModel.breeds.collectAsLazyPagingItems()
@@ -62,6 +67,7 @@ fun BreedsScreen(
         onQueryChange = viewModel::onQueryChange,
         onBreedClick = onBreedClick,
         onFavoriteToggle = viewModel::onFavoriteToggle,
+        onNavigateToFavorites = onNavigateToFavorites,
         snackbarHostState = snackbarHostState,
     )
 }
@@ -74,6 +80,7 @@ private fun BreedsScreenContent(
     onQueryChange: (String) -> Unit,
     onBreedClick: (String) -> Unit,
     onFavoriteToggle: (String) -> Unit,
+    onNavigateToFavorites: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     val focusManager = LocalFocusManager.current
@@ -84,7 +91,17 @@ private fun BreedsScreenContent(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.breeds_title)) })
+            TopAppBar(
+                title = { Text(stringResource(R.string.breeds_title)) },
+                actions = {
+                    IconButton(onClick = onNavigateToFavorites) {
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = stringResource(R.string.favorites_navigate),
+                        )
+                    }
+                },
+            )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
@@ -235,6 +252,7 @@ private fun BreedsScreenPreview() {
             onQueryChange = {},
             onBreedClick = {},
             onFavoriteToggle = {},
+            onNavigateToFavorites = {},
             snackbarHostState = SnackbarHostState(),
         )
     }

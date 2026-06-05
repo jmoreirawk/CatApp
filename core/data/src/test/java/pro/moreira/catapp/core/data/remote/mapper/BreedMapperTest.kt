@@ -28,7 +28,7 @@ class BreedMapperTest {
     }
 
     @Test
-    fun `dto maps to cache entity without favourite state`() {
+    fun `dto maps to cache entity without favorite state`() {
         val entity =
             BreedDto(
                 id = "abys",
