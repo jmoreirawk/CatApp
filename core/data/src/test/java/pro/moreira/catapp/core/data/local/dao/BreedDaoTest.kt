@@ -36,9 +36,11 @@ class BreedDaoTest {
 
     @Test
     fun `search paging source filters breeds by name`() = runTest {
-        breedDao.upsertBreed(id = "abys", name = "Abyssinian")
-        breedDao.upsertBreed(id = "beng", name = "Bengal")
-        breedDao.upsertBreed(id = "sphy", name = "Sphynx")
+        breedDao.upsertBreeds(
+            "abys" to "Abyssinian",
+            "beng" to "Bengal",
+            "sphy" to "Sphynx",
+        )
 
         val result = breedDao.searchPagingSource("ben").load(
             PagingSource.LoadParams.Refresh(
@@ -77,11 +79,12 @@ class BreedDaoTest {
 
     @Test
     fun `observe favorites returns only favorited breeds`() = runTest {
-        breedDao.upsertBreed(id = "abys", name = "Abyssinian")
-        breedDao.upsertBreed(id = "beng", name = "Bengal")
-        breedDao.upsertBreed(id = "sphy", name = "Sphynx")
-        breedDao.toggleFavorite("abys")
-        breedDao.toggleFavorite("sphy")
+        breedDao.upsertBreeds(
+            "abys" to "Abyssinian",
+            "beng" to "Bengal",
+            "sphy" to "Sphynx",
+        )
+        breedDao.favorite("abys", "sphy")
 
         val favorites = breedDao.observeFavorites().first()
 
@@ -90,12 +93,12 @@ class BreedDaoTest {
 
     @Test
     fun `observe favorites returns breeds ordered by name`() = runTest {
-        breedDao.upsertBreed(id = "sphy", name = "Sphynx")
-        breedDao.upsertBreed(id = "beng", name = "Bengal")
-        breedDao.upsertBreed(id = "abys", name = "Abyssinian")
-        breedDao.toggleFavorite("abys")
-        breedDao.toggleFavorite("beng")
-        breedDao.toggleFavorite("sphy")
+        breedDao.upsertBreeds(
+            "sphy" to "Sphynx",
+            "beng" to "Bengal",
+            "abys" to "Abyssinian",
+        )
+        breedDao.favorite("abys", "beng", "sphy")
 
         val favorites = breedDao.observeFavorites().first()
 
@@ -103,6 +106,14 @@ class BreedDaoTest {
             listOf("Abyssinian", "Bengal", "Sphynx"),
             favorites.map { it.name },
         )
+    }
+
+    private suspend fun BreedDao.upsertBreeds(vararg breeds: Pair<String, String>) {
+        breeds.forEach { (id, name) -> upsertBreed(id = id, name = name) }
+    }
+
+    private suspend fun BreedDao.favorite(vararg ids: String) {
+        ids.forEach { id -> toggleFavorite(id) }
     }
 
     private suspend fun BreedDao.upsertBreed(
