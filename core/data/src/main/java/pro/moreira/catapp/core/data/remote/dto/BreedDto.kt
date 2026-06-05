@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class BreedDto(
+data class BreedDto(
     val id: String,
     val name: String,
     val image: ImageDto? = null,
@@ -16,6 +16,6 @@ internal data class BreedDto(
 )
 
 @Serializable
-internal data class ImageDto(
+data class ImageDto(
     val url: String? = null,
 )

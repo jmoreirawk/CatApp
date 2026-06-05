@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import pro.moreira.catapp.core.domain.model.Breed
@@ -41,6 +42,7 @@ fun BreedCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .testTag("breed_card_${breed.id}")
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {

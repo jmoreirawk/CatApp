@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-internal interface CatApiService {
+interface CatApiService {
     @GET("v1/breeds")
     suspend fun getBreeds(
         @Query("page") page: Int,
