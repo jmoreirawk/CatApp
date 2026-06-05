@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="details_error_message">Unable to load breed details.</string>
+    <string name="details_retry">Retry</string>
+    <string name="details_origin_label">Origin</string>
+    <string name="details_temperament_label">Temperament</string>
+    <string name="details_description_label">Description</string>
+    <string name="breed_image_content_description">%1$s cat</string>
+    <string name="add_to_favourites">Add to favourites</string>
+    <string name="remove_from_favourites">Remove from favourites</string>
+    <string name="details_favorite_error">Failed to update favourite. Please try again.</string>
+</resources>
