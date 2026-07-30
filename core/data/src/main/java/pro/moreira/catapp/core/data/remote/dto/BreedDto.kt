@@ -11,11 +11,14 @@ data class BreedDto(
     val origin: String = "",
     val temperament: String = "",
     val description: String = "",
+    @SerialName("reference_image_id")
+    val referenceImageId: String? = null,
     @SerialName("life_span")
     val lifespan: String = "",
 )
 
 @Serializable
 data class ImageDto(
+    val id: String? = null,
     val url: String? = null,
 )

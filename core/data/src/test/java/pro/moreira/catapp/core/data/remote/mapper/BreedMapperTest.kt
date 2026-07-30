@@ -49,4 +49,26 @@ class BreedMapperTest {
         assertEquals("14 - 15", entity.lifespan)
         assertEquals(false, entity.isFavorite)
     }
+
+    @Test
+    fun `reference image id maps to cat image url when image url is missing`() {
+        val breed = BreedDto(
+            id = "abys",
+            name = "Abyssinian",
+            referenceImageId = "0XYvRd7oD",
+        ).toDomain()
+
+        assertEquals("https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg", breed.imageUrl)
+    }
+
+    @Test
+    fun `image id maps to cat image url when image url is missing`() {
+        val breed = BreedDto(
+            id = "abys",
+            name = "Abyssinian",
+            image = ImageDto(id = "0XYvRd7oD"),
+        ).toDomain()
+
+        assertEquals("https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg", breed.imageUrl)
+    }
 }
