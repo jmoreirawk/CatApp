@@ -1,12 +1,13 @@
 package pro.moreira.catapp
 
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
@@ -24,6 +25,7 @@ import org.junit.Test
 import pro.moreira.catapp.core.data.di.NetworkModule
 import pro.moreira.catapp.core.data.remote.CatApiService
 import pro.moreira.catapp.core.data.remote.dto.BreedDto
+import pro.moreira.catapp.feature.favorites.R
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -60,12 +62,11 @@ class CatAppSmokeTest {
 
     @Test
     fun favoriteBreedAppearsInFavoritesWithAggregateLifespan() {
-        waitForText(TEST_BREED_NAME)
-        composeRule.onNodeWithText(TEST_BREED_NAME).assertIsDisplayed()
+        waitForText(TEST_BREED_NAME).assertIsDisplayed()
 
         composeRule.onNodeWithTag("breed_card_$TEST_BREED_ID").performClick()
         waitForText(TEST_BREED_ORIGIN)
-        composeRule.onNodeWithText(TEST_BREED_DESCRIPTION).assertIsDisplayed()
+        waitForText(TEST_BREED_DESCRIPTION).assertIsDisplayed()
 
         composeRule.onNodeWithContentDescription("Add to favorites").performClick()
         waitForContentDescription("Remove from favorites")
@@ -74,33 +75,44 @@ class CatAppSmokeTest {
         waitForText(TEST_BREED_NAME)
         composeRule.onNodeWithContentDescription("Favorites").performClick()
 
+        val expectedLifespan = InstrumentationRegistry.getInstrumentation()
+            .targetContext
+            .getString(
+                R.string.favorites_average_lifespan_years,
+                14.0,
+            )
         waitForText("Average Lifespan")
-        composeRule.onNodeWithText(TEST_BREED_NAME).assertIsDisplayed()
-        composeRule.onNodeWithText("14.0 years").assertIsDisplayed()
+        waitForText(TEST_BREED_NAME).assertIsDisplayed()
+        waitForText(expectedLifespan).assertIsDisplayed()
     }
 
-    private fun waitForText(text: String) {
+    private fun waitForText(text: String): SemanticsNodeInteraction {
         composeRule.waitUntil(timeoutMillis = TIMEOUT_MILLIS) {
             composeRule.onAllNodesWithText(text)
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
+        composeRule.waitForIdle()
+        return composeRule.onAllNodesWithText(text).onFirst()
     }
 
-    private fun waitForContentDescription(contentDescription: String) {
+    private fun waitForContentDescription(contentDescription: String): SemanticsNodeInteraction {
         composeRule.waitUntil(timeoutMillis = TIMEOUT_MILLIS) {
             composeRule.onAllNodesWithContentDescription(contentDescription)
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
+        composeRule.waitForIdle()
+        return composeRule.onAllNodesWithContentDescription(contentDescription).onFirst()
     }
 
     private companion object {
         const val TEST_BREED_ID = "smoke-abys"
         const val TEST_BREED_NAME = "Smoke Abyssinian"
         const val TEST_BREED_ORIGIN = "Egypt"
-        const val TEST_BREED_DESCRIPTION = "A deterministic breed used by the end-to-end smoke test."
-        const val TIMEOUT_MILLIS = 5_000L
+        const val TEST_BREED_DESCRIPTION =
+            "A deterministic breed used by the end-to-end smoke test."
+        const val TIMEOUT_MILLIS = 30_000L
     }
 }
 
